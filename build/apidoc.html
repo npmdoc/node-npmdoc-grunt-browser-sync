@@ -1,0 +1,246 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/shakyshane/grunt-browser-sync"
+
+    >grunt-browser-sync (v2.2.0)</a>
+</h1>
+<h4>Live CSS reload & Browser Syncing</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.grunt-browser-sync">module grunt-browser-sync</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.grunt-browser-sync.grunt-browser-sync">
+            function <span class="apidocSignatureSpan"></span>grunt-browser-sync
+            <span class="apidocSignatureSpan">(grunt)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.grunt-browser-sync" id="apidoc.module.grunt-browser-sync">module grunt-browser-sync</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.grunt-browser-sync.grunt-browser-sync" id="apidoc.element.grunt-browser-sync.grunt-browser-sync">
+        function <span class="apidocSignatureSpan"></span>grunt-browser-sync
+        <span class="apidocSignatureSpan">(grunt)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">grunt-browser-sync = function (grunt) {
+
+    // Project configuration.
+    grunt.initConfig({
+        jshint: {
+            all: [
+                &#x27;Gruntfile.js&#x27;,
+                &#x27;tasks/*.js&#x27;,
+                &#x27;&#x3c;%= nodeunit.tests %&#x3e;&#x27;
+            ],
+            options: {
+                jshintrc: &#x27;.jshintrc&#x27;
+            }
+        },
+        uglify: {
+            files: {
+                src: &#x22;tasks/lib/style-injector-client.js&#x22;,
+                dest: &#x22;tasks/lib/style-injector-client.min.js&#x22;
+            }
+        },
+        clean: {
+            tests: [&#x27;tmp&#x27;]
+        },
+        // The actual grunt server settings
+        connect: {
+            server: {
+                options: {
+                    hostname: &#x22;127.0.0.1&#x22;,
+                    port: 9001,
+                    base: &#x22;test/fixtures&#x22;
+                }
+            }
+        },
+        watch: {
+            options: {
+                spawn: false
+            },
+            server_tests: {
+                files: [
+                    &#x22;test/new-server/**/*.js&#x22;,
+                    &#x22;tasks/lib/**/*.js&#x22;
+                ],
+                tasks: [&#x22;jasmine_node&#x22;]
+            },
+            sass: {
+                files: &#x22;test/fixtures/sass/*.scss&#x22;,
+                tasks: [&#x27;bsNotify:sassStart&#x27;, &#x27;sass&#x27;, &#x27;autoprefixer&#x27;, &#x27;bsReload:css&#x27;]
+            }
+        },
+        concurrent: {
+            dev: {
+                tasks: [
+                    &#x27;watch&#x27;,
+                    &#x27;browserSync&#x27;
+                ],
+                options: {
+                    logConcurrentOutput: true
+                }
+            }
+        },
+        autoprefixer: {
+            sass: {
+                files: {
+                    &#x22;test/fixtures/css/style.css&#x22;: &#x22;test/fixtures/css/style.css&#x22;
+                }
+            }
+        },
+        browserSync: {
+            server: {
+                bsFiles: {
+                    src : [
+                        //&#x27;test/fixtures/css/*.css&#x27;,
+                        &#x27;test/fixtures/*.html&#x27;
+                    ]
+                },
+                options: {
+                    open: false,
+                    online: false,
+                    background: true,
+                    server: {
+                        baseDir: [&#x22;test/fixtures&#x22;, &#x22;test/fixtures2&#x22;],
+                        middleware: [
+                            function (req, res, next) {
+                                console.log(&#x22;from middleware 1&#x22;);
+                                next();
+                            },
+                            function (req, res, next) {
+                                console.log(&#x22;from middleware 2&#x22;);
+                                next();
+                            }
+                        ]
+                    }
+                }
+            },
+            proxy: {
+                files: {
+                    src : [
+                        &#x27;test/fixtures/css/style.css&#x27;
+                    ]
+                },
+                options: {
+                    watchTask: false,
+                    debugInfo: true,
+                    ghostMode: {
+                        scroll: true,
+                        links: true,
+                        forms: true
+                    },
+                    proxy: {
+                        host: &#x22;127.0.0.1&#x22;,
+                        port: 9001
+                    }
+                }
+            }
+        },
+        &#x22;bsReload&#x22;: {
+            css: {
+                reload: &#x22;style.css&#x22;
+            },
+            all: {
+                reload: true
+            }
+        },
+        &#x22;bsNotify&#x22;: {
+            sassStart: {
+                notify: &#x22;Please wait, compiling sass!&#x22;
+            }
+        },
+        sass: {
+            test: {
+                files: {
+                    &#x22;test/fixtures/css/style.css&#x22; : &#x22;test/fixtures/sass/style.scss&#x22;
+                }
+            }
+        },
+        karma: {
+            unit: {
+                configFile: &#x27;test/karma.conf.js&#x27;,
+                singleRun: true
+            }
+        },
+        nodeunit: {
+            tests: [&#x27;test/*_test.js&#x27;]
+        }
+    });
+
+    // Actually load this plugin&#x27;s task(s). ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
